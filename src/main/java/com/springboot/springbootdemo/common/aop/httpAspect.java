@@ -26,7 +26,7 @@ public class httpAspect {
     private Logger logger = LoggerFactory.getLogger(httpAspect.class);
 
     //提取重复的拦截代码(公用方法)
-    @Pointcut("execution(public * com.springboot.springbootdemo.controller.HelloController.*(..))")
+    @Pointcut("execution(public * com.springboot.springbootdemo.controller.*.*(..))")
     public void http() {
     }
 
