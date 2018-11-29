@@ -30,6 +30,11 @@ public class HelloController {
         return "0.0.1 OK";
     }
 
+    @GetMapping(value = "jsp")
+    public String jsp(){
+        return "index";
+    }
+
     /**
      * 测试
      * @param myId
