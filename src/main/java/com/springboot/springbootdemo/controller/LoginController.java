@@ -41,7 +41,7 @@ public class LoginController {
     public MessageBox login(String username, String password) {
 
         String salt = ShiroUtils.generateSalt(20);
-        String pass = ShiroUtils.encryptPassword("MD5", password,null);
+        String pass = ShiroUtils.encryptPassword("MD5", password,salt);
 
 
         System.out.println("salt:{"+salt+"}   pass:{"+pass+"}");

@@ -5,6 +5,8 @@ import com.springboot.springbootdemo.dao.UserInfoMapper;
 import com.springboot.springbootdemo.entity.UserInfo;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -43,9 +45,10 @@ public class CustomRealm extends AuthorizingRealm {
         LOGGER.info("{}=============================={}",token.getPrincipal(),this.getName());
         //盐值
        // ByteSource credentialsSalt = ByteSource.Util.bytes("");
-        String salt = "2e7b9a49245c3f2cb5d9";
+        String salt = "3bc8026e0b6264010815";
         ByteSource credentialsSalt = ByteSource.Util.bytes(salt);
-        return new SimpleAuthenticationInfo(userInfo, token.getCredentials(), this.getName());
+        //SimpleAuthenticationInfo authenticationInfo =new SimpleAuthenticationInfo(user, user.getPassWord(), ByteSource.Util.bytes(user.getSalt()),getName());
+        return new SimpleAuthenticationInfo(userInfo, token.getCredentials(), credentialsSalt,this.getName());
     }
     /**
      * 获取授权信息
@@ -65,6 +68,17 @@ public class CustomRealm extends AuthorizingRealm {
         //设置该用户拥有的角色
         info.setRoles(set);
         return info;
-
     }
+
+    /**
+     * 密码验证规则
+     */
+   /* @Override
+    public void setCredentialsMatcher(CredentialsMatcher credentialsMatcher) {
+        HashedCredentialsMatcher shaCredentialsMatcher = new HashedCredentialsMatcher();
+        shaCredentialsMatcher.setHashAlgorithmName("MD5");//散列算法:MD2、MD5、SHA-1、SHA-256、SHA-384、SHA-512等。
+        shaCredentialsMatcher.setHashIterations(1);//散列的次数，默认1次， 设置两次相当于 md5(md5(""));
+        super.setCredentialsMatcher(shaCredentialsMatcher);
+    }*/
+
 }
