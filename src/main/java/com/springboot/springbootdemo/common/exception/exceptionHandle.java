@@ -23,8 +23,8 @@ public class exceptionHandle {
     @ResponseBody//返回json
     public MessageBox handle(Exception e){
         //打印异常
-        logger.info("系统异常{}",e);
-        return MessageBox.build("100",e.getMessage());
+        logger.info("系统异常{}",e.getMessage());
+        return MessageBox.build("108",e.getMessage());
     }
 
     /**

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springboot.springbootdemo.dao.UserInfoMapper" >
+    <resultMap id="userInfoMap" type="com.springboot.springbootdemo.entity.UserInfo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_account" property="userAccount" jdbcType="VARCHAR" />
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+        <result column="user_group_id" property="userGroupId" jdbcType="INTEGER" />
+        <result column="isfreeze" property="isfreeze" jdbcType="INTEGER" />
+        <result column="user_password" property="userPassword" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,user_account,user_phone,user_group_id,isfreeze,user_password
+    </sql>
+    <select id="getAll" resultMap="userInfoMap">
+        select id,user_account,user_phone,user_group_id,isfreeze,user_password from user_info
+    </select>
+
+    <select id="getName"  parameterType="java.lang.String" resultMap="userInfoMap">
+        select
+        id,user_account,user_phone,user_group_id,isfreeze,user_password
+        from
+        user_info
+        where user_phone = #{userPhone}
+    </select>
+</mapper>
