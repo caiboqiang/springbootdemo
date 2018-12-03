@@ -45,10 +45,11 @@ public class CustomRealm extends AuthorizingRealm {
         LOGGER.info("{}=============================={}",token.getPrincipal(),this.getName());
         //盐值
        // ByteSource credentialsSalt = ByteSource.Util.bytes("");
-        String salt = "3bc8026e0b6264010815";
+        String salt = "db27e0dc3520388244d5";
         ByteSource credentialsSalt = ByteSource.Util.bytes(salt);
         //SimpleAuthenticationInfo authenticationInfo =new SimpleAuthenticationInfo(user, user.getPassWord(), ByteSource.Util.bytes(user.getSalt()),getName());
-        return new SimpleAuthenticationInfo(userInfo, token.getCredentials(), credentialsSalt,this.getName());
+        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(userInfo, userInfo.getUserPassword(), credentialsSalt,this.getName());
+        return authenticationInfo;
     }
     /**
      * 获取授权信息

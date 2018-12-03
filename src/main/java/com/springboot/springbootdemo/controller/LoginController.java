@@ -3,6 +3,9 @@ package com.springboot.springbootdemo.controller;
 import com.springboot.springbootdemo.common.base.MessageBox;
 import com.springboot.springbootdemo.common.util.ShiroUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,8 +55,16 @@ public class LoginController {
         //
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         // 执行认证登陆
-        subject.login(token);
-       // String role = userMapper.getRo根据权限，指定返回数据le(username);
+        try {
+            subject.login(token);
+        } catch (AccountException e) {
+            e.printStackTrace();
+            throw new AccountException("密码不正确");
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+            throw new AuthenticationException(e.getMessage());
+        }
+        // String role = userMapper.getRo根据权限，指定返回数据le(username);
         /*if ("user".equals(role)) {
             return MessageBox.build("100","欢迎登陆");
         }
