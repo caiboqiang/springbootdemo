@@ -4,6 +4,14 @@ import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
 
 public class ShiroUtils {
+
+    /**  加密算法 */
+    public final static String algorithmName = "MD5";//散列算法:MD2、MD5、SHA-1、SHA-256、SHA-384、SHA-512等。
+    /**
+     * 加密散列次数
+     */
+    public static final int hashIterations= 1024;
+
     /**
      * 随机生成 salt 需要指定 它的字符串的长度
      *
@@ -26,7 +34,7 @@ public class ShiroUtils {
      * @return 加密后的密码
      */
     public static String encryptPassword(String hashAlgorithm, String password, String salt) {
-        return encryptPassword(hashAlgorithm, password, salt, 1);
+        return encryptPassword(hashAlgorithm, password, salt, 1024);
     }
 
     /**

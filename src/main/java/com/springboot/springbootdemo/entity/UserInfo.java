@@ -11,6 +11,7 @@ public class UserInfo {
     private Integer userGroupId;
     private Integer isfreeze;
     private String userPassword;
+    private String userSalt;
 
     public Integer getId() {
         return id;
@@ -54,6 +55,14 @@ public class UserInfo {
 
     public String getUserPassword() {
         return userPassword;
+    }
+
+    public String getUserSalt() {
+        return userSalt;
+    }
+
+    public void setUserSalt(String userSalt) {
+        this.userSalt = userSalt;
     }
 
     public void setUserPassword(String userPassword) {

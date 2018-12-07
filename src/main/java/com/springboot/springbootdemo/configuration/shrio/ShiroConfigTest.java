@@ -2,13 +2,18 @@ package com.springboot.springbootdemo.configuration.shrio;
 
 import com.springboot.springbootdemo.shrio.CustomRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
+import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +24,39 @@ import java.util.Map;
 //@Configuration
 public class ShiroConfigTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomRealm.class);
+
+    @Bean(name="sessionDAO")
+    public MemorySessionDAO getMemorySessionDAO()
+    {
+        return new MemorySessionDAO();
+    }
+
+
+    public SimpleCookie getSimpleCookie()
+    {
+        SimpleCookie simpleCookie = new SimpleCookie();
+        simpleCookie.setName("CIBOQIANGSHRIOSESSIONID");
+        return simpleCookie;
+    }
+
+    //配置shiro session 的一个管理器
+    @Bean(name = "sessionManager")
+    public DefaultWebSessionManager getDefaultWebSessionManager()
+    {
+        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        sessionManager.setSessionDAO(getMemorySessionDAO());
+        sessionManager.setSessionIdCookie(getSimpleCookie());
+        return sessionManager;
+    }
+
+    //配置session的缓存管理器
+    @Bean(name= "shiroCacheManager")
+    public MemoryConstrainedCacheManager getMemoryConstrainedCacheManager()
+    {
+        return new MemoryConstrainedCacheManager();
+    }
+
+
     @Bean
     public ShiroFilterFactoryBean shirFilter(DefaultWebSecurityManager securityManager) {
         System.out.println("ShiroConfiguration.shirFilter()");
@@ -80,8 +118,6 @@ public class ShiroConfigTest {
         filterChainDefinitionMap.put("/*", "authc");//表示需要认证才可以访问
         filterChainDefinitionMap.put("/**", "authc");//表示需要认证才可以访问
         filterChainDefinitionMap.put("/*.*", "authc");*/
-
-
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         System.out.println();
         LOGGER.info("=================Shiro拦截器工厂类注入成功==================");
@@ -105,6 +141,13 @@ public class ShiroConfigTest {
     @Bean
     public CustomRealm myShiroRealm() {
         CustomRealm myShiroRealm = new CustomRealm();
+        //myShiroRealm.setCachingEnabled(true);
+        //启用身份验证缓存，即缓存AuthenticationInfo信息，默认false
+        myShiroRealm.setAuthenticationCachingEnabled(true);
+        //缓存AuthenticationInfo信息的缓存名称 在ehcache-shiro.xml中有对应缓存的配置
+        myShiroRealm.setAuthenticationCacheName("users");
+        //启用授权缓存，即缓存AuthorizationInfo信息，默认false
+        myShiroRealm.setAuthorizationCachingEnabled(true);
         myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return myShiroRealm;
     }
@@ -116,7 +159,7 @@ public class ShiroConfigTest {
         securityManager.setRealm(myShiroRealm());
         // 注入缓存管理器;
         securityManager.setCacheManager(ehCacheManager());
-
+        securityManager.setSessionManager(getDefaultWebSessionManager());
         return securityManager;
     }
 
@@ -150,7 +193,7 @@ public class ShiroConfigTest {
     public EhCacheManager ehCacheManager() {
         System.out.println("ShiroConfiguration.getEhCacheManager()");
         EhCacheManager cacheManager = new EhCacheManager();
-        cacheManager.setCacheManagerConfigFile("classpath:ehcache.xml");
+        cacheManager.setCacheManagerConfigFile("classpath:ehcache-shrio.xml");
         return cacheManager;
     }
 }

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * HelloController class
@@ -32,6 +33,10 @@ public class HelloController {
 
     @GetMapping(value = "jsp")
     public String jsp(){
+        ModelAndView modelAndView = new ModelAndView();
+
+
+        modelAndView.addObject("h",((Math.random()*9+1)*1000));
         return "index";
     }
 

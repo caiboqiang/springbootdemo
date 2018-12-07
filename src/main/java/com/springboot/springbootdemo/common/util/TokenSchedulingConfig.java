@@ -18,16 +18,16 @@ public class TokenSchedulingConfig {
             0 0/5 0 * * ? 每5分钟执行一次
             0 0/10 * * * ?每10分钟执行一次
             */
-    @Scheduled(cron = "0 0/10 * * * ?") // 每10分钟执行一次
+    //@Scheduled(cron = "0 0/10 * * * ?") // 每10分钟执行一次
     public void getToken() {
         log.info("getToken定时任务启动");
     }
-    @Scheduled(fixedRate = 3000)
+    //@Scheduled(fixedRate = 3000)
     public void scheduledTask() {
         log.info("scheduledTask定时任务启动3000");
     }
 
-    @Scheduled(fixedRate = 5000)//秒
+    //@Scheduled(fixedRate = 5000)//秒
     public void scheduledTaskg() {
         log.info("scheduledTask定时任务启动5000");
     }

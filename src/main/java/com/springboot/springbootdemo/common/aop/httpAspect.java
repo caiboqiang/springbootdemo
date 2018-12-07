@@ -65,6 +65,6 @@ public class httpAspect {
      */
     @AfterReturning(pointcut = "http()", returning = "object")
     public void httpAfterReturning(Object object) {
-        logger.info("=={}==", object.toString());
+        logger.info("==接口返回内容拦截:{}==", object.toString());
     }
 }

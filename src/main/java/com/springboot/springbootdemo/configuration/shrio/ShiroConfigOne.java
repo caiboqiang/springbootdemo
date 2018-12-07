@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Configuration
+//@Configuration
 public class ShiroConfigOne {
     private final static Logger logger = LoggerFactory.getLogger(ShiroConfig.class);
 

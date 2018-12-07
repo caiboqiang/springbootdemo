@@ -2,46 +2,53 @@ package com.springboot.springbootdemo.configuration.shrio;
 
 
 
+import com.springboot.springbootdemo.common.util.ShiroUtils;
 import com.springboot.springbootdemo.shrio.CustomRealm;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+@Slf4j
 @Configuration
 public class ShiroConfig {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomRealm.class);
+
+    // 下面两个方法对 注解权限起作用有很大的关系，请把这两个方法，放在配置的最上面
+    @Bean(name = "lifecycleBeanPostProcessor")
+    public LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
+    @Bean
+    public DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator() {
+        log.info("=================getDefaultAdvisorAutoProxyCreator成功:1==================");
+        DefaultAdvisorAutoProxyCreator autoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        autoProxyCreator.setProxyTargetClass(true);
+        return autoProxyCreator;
+    }
     /**
      * 注入 securityManager
      */
     @Bean
     public SecurityManager securityManager() {
+        log.info("=================securityManager成功:2==================");
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         // 设置realm.
         securityManager.setRealm(customRealm());
-        //securityManager.setSessionManager(sessionManager());
+        // 将sessionDAO放进来
+        securityManager.setSessionManager( getDefaultWebSessionManager() );
         return securityManager;
     }
-
-    /*@Bean
-    public SessionManager sessionManager() {
-        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
-        *//*sessionManager.setSessionValidationSchedulerEnabled(true);
-        sessionManager.setSessionIdCookieEnabled(true);*//*
-        return sessionManager;
-    }*/
-
     /**
      * 自定义身份认证 realm;
      * <p>
@@ -50,11 +57,11 @@ public class ShiroConfig {
      */
     @Bean
     public CustomRealm customRealm() {
+        log.info("=================customRealm成功:3==================");
         CustomRealm customRealm = new CustomRealm();
         customRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return customRealm;
     }
-
     /**
      * 密码校验规则HashedCredentialsMatcher
      * 这个类是为了对密码进行编码的 ,
@@ -64,13 +71,47 @@ public class ShiroConfig {
      */
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        log.info("=================hashedCredentialsMatcher成功:4==================");
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
-        hashedCredentialsMatcher.setHashAlgorithmName("MD5");//散列算法:MD2、MD5、SHA-1、SHA-256、SHA-384、SHA-512等。
-        hashedCredentialsMatcher.setHashIterations(1);//散列的次数，默认1次， 设置两次相当于 md5(md5(""));
+        hashedCredentialsMatcher.setHashAlgorithmName(ShiroUtils.algorithmName);//散列算法:MD2、MD5、SHA-1、SHA-256、SHA-384、SHA-512等。
+        hashedCredentialsMatcher.setHashIterations(ShiroUtils.hashIterations);//散列的次数，默认1次， 设置两次相当于 md5(md5(""));
         return hashedCredentialsMatcher;
+    }
+    // 配置sessionDAO
+    @Bean(name="sessionDAO")
+    public MemorySessionDAO getMemorySessionDAO(){
+        log.info("=================getMemorySessionDAO成功:5==================");
+        MemorySessionDAO sessionDAO = new MemorySessionDAO();
+        return sessionDAO;
+    }
+
+    //配置shiro session 的一个管理器
+    @Bean(name = "sessionManager")
+    public DefaultWebSessionManager getDefaultWebSessionManager(){
+        log.info("=================getDefaultWebSessionManager成功:6==================");
+        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        // 设置session过期时间
+        sessionManager.setGlobalSessionTimeout(60*60*1000);
+        // 定时清理失效会话, 清理用户直接关闭浏览器造成的孤立会话
+        sessionManager.setSessionValidationInterval(60*60*1000);
+        sessionManager.setSessionValidationSchedulerEnabled(true);
+        // 去掉shiro登录时url里的JSESSIONID
+        //sessionManagers.setSessionIdUrlRewritingEnabled(false);
+        // 指定sessionid
+        sessionManager.setSessionIdCookie(getSimpleCookie());
+        // 请注意看代码：设置Session
+        sessionManager.setSessionDAO(getMemorySessionDAO());
+        return sessionManager;
+    }
+    public SimpleCookie getSimpleCookie() {
+        log.info("=================getSimpleCookie成功:7==================");
+        SimpleCookie simpleCookie = new SimpleCookie();
+        simpleCookie.setName("CBQSHRIOSESSIONID");
+        return simpleCookie;
     }
     @Bean
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
+        log.info("=================shirFilter成功:8==================");
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 必须设置 SecurityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -105,9 +146,26 @@ public class ShiroConfig {
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         System.out.println();
-        LOGGER.info("=================Shiro拦截器工厂类注入成功==================");
+        log.info("=================Shiro拦截器工厂类注入成功:9==================");
         return shiroFilterFactoryBean;
     }
-
+    @Bean
+    public AuthorizationAttributeSourceAdvisor getAuthorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
+        log.info("=================getAuthorizationAttributeSourceAdvisor成功:10==================");
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(securityManager);
+        return advisor;
+    }
+    /**
+     * aop代理
+     * @return
+     */
+   /* @Bean
+    @DependsOn("lifecycleBeanPostProcessor")
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+        return defaultAdvisorAutoProxyCreator;
+    }*/
 
 }

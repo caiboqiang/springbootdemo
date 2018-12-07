@@ -8,18 +8,19 @@
         <result column="user_group_id" property="userGroupId" jdbcType="INTEGER" />
         <result column="isfreeze" property="isfreeze" jdbcType="INTEGER" />
         <result column="user_password" property="userPassword" jdbcType="VARCHAR" />
+        <result column="user_salt" property="userSalt" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="Base_Column_List" >
         id,user_account,user_phone,user_group_id,isfreeze,user_password
     </sql>
     <select id="getAll" resultMap="userInfoMap">
-        select id,user_account,user_phone,user_group_id,isfreeze,user_password from user_info
+        select id,user_account,user_phone,user_group_id,isfreeze,user_password,user_salt from user_info
     </select>
 
     <select id="getName"  parameterType="java.lang.String" resultMap="userInfoMap">
         select
-        id,user_account,user_phone,user_group_id,isfreeze,user_password
+        id,user_account,user_phone,user_group_id,isfreeze,user_password,user_salt
         from
         user_info
         where user_phone = #{userPhone}
