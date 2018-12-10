@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 @Slf4j
-@Configuration
+//@Configuration
 public class ShiroConfig {
 
     // 下面两个方法对 注解权限起作用有很大的关系，请把这两个方法，放在配置的最上面
@@ -132,7 +132,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login", "anon");
         //其余接口一律拦截
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "anon");
 
        /* filterChainDefinitionMap.put("/jsp/login.jsp*", "anon"); //表示可以匿名访问
         filterChainDefinitionMap.put("/loginUser", "anon");
@@ -156,16 +156,4 @@ public class ShiroConfig {
         advisor.setSecurityManager(securityManager);
         return advisor;
     }
-    /**
-     * aop代理
-     * @return
-     */
-   /* @Bean
-    @DependsOn("lifecycleBeanPostProcessor")
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
-        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
-        return defaultAdvisorAutoProxyCreator;
-    }*/
-
 }

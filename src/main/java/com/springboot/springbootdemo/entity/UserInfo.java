@@ -1,9 +1,11 @@
 package com.springboot.springbootdemo.entity;
 
+import java.io.Serializable;
+
 /**
  * pojo 用户类
  */
-public class UserInfo {
+public class UserInfo implements  Serializable {
 
     private Integer id;
     private String userAccount;
@@ -67,5 +69,18 @@ public class UserInfo {
 
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", userAccount='" + userAccount + '\'' +
+                ", userPhone='" + userPhone + '\'' +
+                ", userGroupId=" + userGroupId +
+                ", isfreeze=" + isfreeze +
+                ", userPassword='" + userPassword + '\'' +
+                ", userSalt='" + userSalt + '\'' +
+                '}';
     }
 }

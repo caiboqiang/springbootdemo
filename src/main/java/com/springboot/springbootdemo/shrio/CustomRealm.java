@@ -2,29 +2,28 @@ package com.springboot.springbootdemo.shrio;
 import com.springboot.springbootdemo.common.util.ShiroUtils;
 import com.springboot.springbootdemo.dao.UserInfoMapper;
 import com.springboot.springbootdemo.entity.UserInfo;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
+@Slf4j
 public class CustomRealm extends AuthorizingRealm {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomRealm.class);
     @Autowired
     private UserInfoMapper userInfoMapper;
     @Autowired
-   private SessionDAO sessionDAO;
+    RedisSessionDAO redisSessionDAO;
     /**
      * 获取身份验证信息
      * Shiro中，最终是通过 Realm 来获取应用程序中的用户、角色及权限信息的。
@@ -32,10 +31,9 @@ public class CustomRealm extends AuthorizingRealm {
      * @param authenticationToken 用户身份信息 token
      * @return 返回封装了用户信息的 AuthenticationInfo 实例
      */
-
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        LOGGER.info("=============身份认证方法=================");
+        log.info("=============身份认证方法=================");
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
         UserInfo userInfo= userInfoMapper.getName(token.getUsername());
         if(userInfo == null){
@@ -47,18 +45,32 @@ public class CustomRealm extends AuthorizingRealm {
         if(!userInfo.getUserPassword().equals(pass)){
             throw new AccountException("密码不正确");
         }
+
         //如果当前用户已登入踢掉以登入的用户。
-        Collection<Session> sessions = sessionDAO.getActiveSessions();
+        Collection<Session> sessions = redisSessionDAO.getActiveSessions();
         for (Session session: sessions) {
-            UserInfo sysUser = (UserInfo)session.getAttribute("USER_SESSION");
+
+            //结合redis 验证用户不可以重复登入（Session数据缓存到redis）
+            Object obj = session.getAttribute("USER_SESSION");
+            if(obj != null){
+                JSONObject jsonObject = JSONObject.fromObject(obj.toString());
+                String name = jsonObject.getString("userPhone");
+                if(name.equals(token.getUsername())){
+                    redisSessionDAO.delete(session);
+                    log.info("=======用户{}被挤下线=========",name);
+                }
+            }
+
+            //一般验证用户不可以重复登入session保存在本地
+           /* UserInfo sysUser = (UserInfo)session.getAttribute("USER_SESSION");
             // 如果session里面有当前登陆的，则证明是重复登陆的，则将其剔除
             if( sysUser!=null ){
                 if( token.getUsername().equals( sysUser.getUserPhone() ) ){
                     session.setTimeout(0);
                 }
-            }
+            }*/
         }
-        LOGGER.info("{}=============================={}",token.getPrincipal(),this.getName());
+        log.info("{}=============================={}",token.getPrincipal(),this.getName());
         //盐值
         String salt = userInfo.getUserSalt();
         ByteSource credentialsSalt = ByteSource.Util.bytes(salt);
@@ -87,16 +99,5 @@ public class CustomRealm extends AuthorizingRealm {
         info.setRoles(set);
         return info;
     }
-
-    /**
-     * 密码验证规则
-     */
-   /* @Override
-    public void setCredentialsMatcher(CredentialsMatcher credentialsMatcher) {
-        HashedCredentialsMatcher shaCredentialsMatcher = new HashedCredentialsMatcher();
-        shaCredentialsMatcher.setHashAlgorithmName("MD5");//散列算法:MD2、MD5、SHA-1、SHA-256、SHA-384、SHA-512等。
-        shaCredentialsMatcher.setHashIterations(1);//散列的次数，默认1次， 设置两次相当于 md5(md5(""));
-        super.setCredentialsMatcher(shaCredentialsMatcher);
-    }*/
 
 }
