@@ -1,6 +1,8 @@
 package com.springboot.springbootdemo.controller;
 
+import com.springboot.springbootdemo.common.base.MessageBox;
 import com.springboot.springbootdemo.common.redis.redisService;
+import com.springboot.springbootdemo.websocket.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,9 @@ public class HelloController {
     @Autowired
     private redisService redis;
 
+    @Autowired
+    private WebSocketServer socketServer;
+
     /**
      * 测试
      * @return
@@ -34,8 +39,6 @@ public class HelloController {
     @GetMapping(value = "jsp")
     public String jsp(){
         ModelAndView modelAndView = new ModelAndView();
-
-
         modelAndView.addObject("h",((Math.random()*9+1)*1000));
         return "index";
     }
@@ -56,6 +59,23 @@ public class HelloController {
 
         logger.info("=========={}===================",myId);
         return "---------{}"+myId+"===="+name+"=========";
+    }
+
+    /**
+     * 消息推送
+     * @param msg
+     * @param sid
+     * @return
+     */
+    @RequestMapping("/webSocket")
+    @ResponseBody
+    public MessageBox webSocket(String msg,String sid){
+       try {
+           socketServer.sendInfo(msg,sid);
+       }catch (Exception e){
+           e.printStackTrace();
+       }
+        return MessageBox.build("100","ok");
     }
 
 }

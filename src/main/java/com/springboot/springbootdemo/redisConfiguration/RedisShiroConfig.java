@@ -103,8 +103,10 @@ public class RedisShiroConfig {
     public RedisManager redisManager() {
         log.info("=====redisManager成功:6======");
         RedisManager redisManager = new RedisManager();
-        redisManager.setHost(IP);
-        redisManager.setPort(HOST);
+        /*redisManager.setHost(IP);
+        redisManager.setPort(HOST);*/
+        redisManager.setHost("localhost");
+        redisManager.setPort(6379);
         redisManager.setTimeout(1800000);
         redisManager.setExpire(1800);// 配置缓存过期时间
         // redisManager.setPassword(password);

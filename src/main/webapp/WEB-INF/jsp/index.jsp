@@ -71,7 +71,7 @@
             return false;
         }
         //webSocket = new WebSocket(serveraddress+"/"+userId);
-        webSocket = new WebSocket("ws://localhost:8080/websocket/${h}");
+        webSocket = new WebSocket("ws://localhost:8080/websocket/555");
 
         // 收到服务端消息
         webSocket.onmessage = function (msg) {

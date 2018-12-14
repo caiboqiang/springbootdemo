@@ -189,13 +189,14 @@
             <version>1.2.2</version>
         </dependency>
         <!-- END -->
+
         <!-- mail邮件 BEGIN-->
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>1.6.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         <!-- END -->
+
         <!-- WebSocket BEGIN-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
