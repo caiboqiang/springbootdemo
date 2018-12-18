@@ -51,14 +51,14 @@ public class HelloController {
      */
     @RequestMapping(value = "/getId/{id}/{name}")//@RequestParam(value = "id",required = false, defaultValue = "0")
     @ResponseBody
-    public String resFu( @PathVariable("id") Integer myId,
+    public MessageBox resFu( @PathVariable("id") Integer myId,
                          @PathVariable("name") String name){
         // System.out.println("==={}",id);
         redis.set("cai","boqiang");
         System.out.println(redis.get("cai"));
 
         logger.info("=========={}===================",myId);
-        return "---------{}"+myId+"===="+name+"=========";
+        return MessageBox.build("100","ok","---------{}"+myId+"===="+name+"=========");
     }
 
     /**

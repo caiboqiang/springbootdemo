@@ -147,6 +147,9 @@ public class RedisShiroConfig {
 
         // 设置拦截器（配置访问权限）
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+        // css js
+        filterChainDefinitionMap.put("/static/img/**", "anon");
+        filterChainDefinitionMap.put("/static/js/**", "anon");
         //游客，开发权限
         filterChainDefinitionMap.put("/guest/**", "anon");
         //用户，需要角色权限 “user”
@@ -157,6 +160,7 @@ public class RedisShiroConfig {
         filterChainDefinitionMap.put("/login", "anon");
         //其余接口一律拦截
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
+        //filterChainDefinitionMap.put("/**", "authc");
         filterChainDefinitionMap.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         System.out.println();

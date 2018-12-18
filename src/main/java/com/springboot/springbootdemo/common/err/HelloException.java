@@ -5,11 +5,11 @@ package com.springboot.springbootdemo.common.err;
  * 因为spring只对RuntimeException异常事物进行回滚RuntimeException继承了Exception
  * 如果抛出的是Exception是不对事物进行回滚的
  */
-public class helloException extends RuntimeException{
+public class HelloException extends RuntimeException{
 
     private String code;
 
-    public helloException(String message, String code) {
+    public HelloException(String message, String code) {
         super(message);
         this.code = code;
     }

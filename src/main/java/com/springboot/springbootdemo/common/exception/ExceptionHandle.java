@@ -2,7 +2,8 @@ package com.springboot.springbootdemo.common.exception;
 
 
 import com.springboot.springbootdemo.common.base.MessageBox;
-import com.springboot.springbootdemo.common.err.helloException;
+import com.springboot.springbootdemo.common.err.HelloException;
+import org.apache.shiro.authc.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 把抛出来的异常捕获，重新封装返回
  */
 @ControllerAdvice
-public class exceptionHandle {
+public class ExceptionHandle {
 
-    private Logger logger =  LoggerFactory.getLogger(exceptionHandle.class);
+    private Logger logger =  LoggerFactory.getLogger(ExceptionHandle.class);
 
     //要捕获的异常类
     @ExceptionHandler(value = Exception.class)//此处声明捕获的异常类
@@ -32,9 +33,19 @@ public class exceptionHandle {
      * @param h
      * @return
      */
-    @ExceptionHandler(value = helloException.class)
+    @ExceptionHandler(value = HelloException.class)
     @ResponseBody
-    public MessageBox helloHandler(helloException h){
+    public MessageBox helloHandler(HelloException h){
         return MessageBox.build(h.getCode(),h.getMessage());
+    }
+    /**
+     * 登入错误
+     * @param h
+     * @return
+     */
+    @ExceptionHandler(value = AuthenticationException.class)
+    @ResponseBody
+    public MessageBox log(AuthenticationException h){
+        return MessageBox.build("100","登入错误在试一次");
     }
 }
