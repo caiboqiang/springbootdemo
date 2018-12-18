@@ -1,7 +1,6 @@
 package com.springboot.springbootdemo.kurento;
 
 import org.kurento.client.KurentoClient;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
