@@ -36,6 +36,13 @@ public class RedisShiroConfig {
     private String IP;
     @Value("${spring.redis.port}")
     private int HOST;
+
+    @Bean
+    public RedisSessionDao getRedisSessionDao(){
+
+        return new RedisSessionDao();
+    }
+
     /**
      * 4. 配置LifecycleBeanPostProcessor，可以来自动的调用配置在Spring IOC容器中 Shiro Bean 的生命周期方法
      * @return
@@ -92,6 +99,8 @@ public class RedisShiroConfig {
     public RedisSessionDAO redisSessionDAO() {
         log.info("=====redisSessionDAO成功:5======");
         RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
+        //设置redis保存共享session key
+        //redisSessionDAO.setKeyPrefix("springboot_shiro_redis_session_test");
         redisSessionDAO.setRedisManager(redisManager());
         return redisSessionDAO;
     }
@@ -119,7 +128,10 @@ public class RedisShiroConfig {
     public DefaultWebSessionManager sessionManager() {
         log.info("=====sessionManager成功:7======");
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        //sessionManager.setGlobalSessionTimeout(43200000); //12小时
+        //sessionManager.setDeleteInvalidSessions(true);
         sessionManager.setSessionDAO(redisSessionDAO());     //设置redisSessionDAO
+        //sessionManager.setSessionDAO(getRedisSessionDao());
         sessionManager.setSessionIdCookie(cookie());        // 设置JSESSIONID
         //sessionManager.setDeleteInvalidSessions(true);      // 删除无效session
         return sessionManager;
@@ -128,8 +140,20 @@ public class RedisShiroConfig {
     public SimpleCookie cookie(){
         log.info("=====cookie成功:8======");
         SimpleCookie cookie = new SimpleCookie("SHAREJSESSIONID"); //  cookie的name,对应的默认是 JSESSIONID
+        /**
+         * HttpOnly标志的引入是为了防止设置了该标志的cookie被JavaScript读取，
+         * 但事实证明设置了这种cookie在某些浏览器中却能被JavaScript覆盖，
+         * 可被攻击者利用来发动session fixation攻击
+         */
         cookie.setHttpOnly(true);
         cookie.setPath("/");        //  path为 / 用于多个系统共享JSESSIONID
+        /**
+         * 设置浏览器cookie过期时间，如果不设置默认为-1，表示关闭浏览器即过期
+         * cookie的单位为秒 比如60*60为1小时
+         */
+        cookie.setMaxAge(-1);
+
+
         return cookie;
     }
 
