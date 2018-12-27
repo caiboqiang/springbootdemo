@@ -60,8 +60,8 @@ public class WebSocketServer {
      * @param message 客户端发送过来的消息*/
     @OnMessage
     public void onMessage(String message, Session session) {
-
-        log.info("收到来自窗口"+sid+"的信息:"+message);
+        log.info("收到来自窗口"+sid+"，长度:"+message.length()+"推送内容:"+message);
+        //log.info("收到来自窗口"+sid+"的信息:"+message);
         //群发消息
         for (WebSocketServer item : webSocketSet) {
             try {
@@ -93,7 +93,7 @@ public class WebSocketServer {
      * 群发自定义消息
      * */
     public static void sendInfo(String message,@PathParam("sid") String sid) throws IOException {
-        log.info("推送消息到窗口"+sid+"，推送内容:"+message);
+        log.info("推送消息到窗口"+sid+"，长度:"+message.length()+"推送内容:"+message);
         for (WebSocketServer item : webSocketSet) {
             try {
                 //这里可以设定只推送给这个sid的，为null则全部推送

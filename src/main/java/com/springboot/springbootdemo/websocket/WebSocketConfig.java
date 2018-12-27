@@ -25,8 +25,6 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 public class WebSocketConfig implements WebSocketConfigurer {
     @Bean
     public ServerEndpointExporter serverEndpointExporter() {
-        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-        container.setMaxBinaryMessageBufferSize(8192);
         log.info("==========WebSocket加载启动.........============");
         return new ServerEndpointExporter();
     }
@@ -39,9 +37,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public ServletServerContainerFactoryBean createWebSocketContainer() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
         //todo 设置文本消息的最大缓冲区大小
-        container.setMaxTextMessageBufferSize(100000);
+        container.setMaxTextMessageBufferSize(50000);
         //todo 设置二进制消息的当前最大缓冲区大小
-        container.setMaxBinaryMessageBufferSize(200000);
+        container.setMaxBinaryMessageBufferSize(50000);
         return container;
     }
 
