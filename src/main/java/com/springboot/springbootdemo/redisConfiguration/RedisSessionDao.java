@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @Data 2018-12-7 15:43
  * @Version 1.0
  **/
-@Service
+//@Service
 public class RedisSessionDao extends AbstractSessionDAO {
     // Session超时时间，单位为毫秒
     private long expireTime = 120000;

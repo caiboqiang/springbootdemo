@@ -71,7 +71,7 @@
             return false;
         }
         //webSocket = new WebSocket(serveraddress+"/"+userId);
-        webSocket = new WebSocket("ws://localhost:8080/websocket/555");
+        webSocket = new WebSocket("ws://localhost:8081/webSocket/555");
 
         // 收到服务端消息
         webSocket.onmessage = function (msg) {
@@ -115,7 +115,10 @@
 
     function send(){
         var message = $("#message").val();
+        var img = $("#img").val();
+
         webSocket.send(message);
+        webSocket.send(img);
     }
 
     function clearConnectStatu(){
@@ -159,6 +162,7 @@ server地址 :  <input id ="serveraddress" type="text" /><br/>
 
 =====================================================<br/>
 消息 :  <input id ="message" type="text" /><br/>
+图片 :  <input id="img" type="file"><br>
 <button onclick="send()">发送</button><br/>
 =====================================================<br/>
 连接状态 : <button onclick="clearConnectStatu()">清空</button><br/>

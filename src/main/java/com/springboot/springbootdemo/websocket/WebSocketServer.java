@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @Slf4j
-@ServerEndpoint("/websocket/{sid}")
+@ServerEndpoint("/webSocket/{sid}")
 @Component
 public class WebSocketServer {
 
@@ -20,7 +20,8 @@ public class WebSocketServer {
     private static CopyOnWriteArraySet<WebSocketServer> webSocketSet = new CopyOnWriteArraySet<WebSocketServer>();
 
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
-    private Session session;
+    private Session session ;
+
 
     //接收sid
     private String sid="";
@@ -29,6 +30,8 @@ public class WebSocketServer {
     @OnOpen
     public void onOpen(Session session,@PathParam("sid") String sid) {
         this.session = session;
+
+        log.info("session.getMaxBinaryMessageBufferSize():"+session.getMaxBinaryMessageBufferSize()+"========================");
         webSocketSet.add(this);     //加入set中
         addOnlineCount();           //在线数加1
         log.info("有新窗口开始监听:"+sid+",当前在线人数为" + getOnlineCount());
@@ -36,7 +39,7 @@ public class WebSocketServer {
         try {
             sendMessage("连接成功");
         } catch (IOException e) {
-            log.error("websocket IO异常");
+            log.error("webSocket IO异常");
         }
     }
 
@@ -57,11 +60,12 @@ public class WebSocketServer {
      * @param message 客户端发送过来的消息*/
     @OnMessage
     public void onMessage(String message, Session session) {
+
         log.info("收到来自窗口"+sid+"的信息:"+message);
         //群发消息
         for (WebSocketServer item : webSocketSet) {
             try {
-                item.sendMessage("4444444444");
+                item.sendMessage(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -115,5 +119,6 @@ public class WebSocketServer {
     public static synchronized void subOnlineCount() {
         WebSocketServer.onlineCount--;
     }
+
 }
 

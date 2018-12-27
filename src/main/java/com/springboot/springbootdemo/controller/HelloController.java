@@ -43,6 +43,13 @@ public class HelloController {
         return "index";
     }
 
+    @GetMapping(value = "rtmp")
+    public String rtmp(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("h",((Math.random()*9+1)*1000));
+        return "rtmp";
+    }
+
     /**
      * 测试
      * @param myId
