@@ -36,10 +36,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-        //todo 设置文本消息的最大缓冲区大小
-        container.setMaxTextMessageBufferSize(50000);
-        //todo 设置二进制消息的当前最大缓冲区大小
-        container.setMaxBinaryMessageBufferSize(50000);
+        //todo 设置文本消息的最大缓冲区大小1M=1024字节
+        container.setMaxTextMessageBufferSize(5000000);
+        //todo 设置二进制消息的当前最大缓冲区大小1M=1024字节
+        container.setMaxBinaryMessageBufferSize(5000000);
         return container;
     }
 
