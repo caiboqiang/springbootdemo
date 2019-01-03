@@ -7,50 +7,13 @@
     <title>单文件上传</title>
 </head>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<%--<script>
 
-    
-    var socket;
-    if(typeof(WebSocket) == "undefined") {
-        console.log("您的浏览器不支持WebSocket");
-    }else{
-        console.log("您的浏览器支持WebSocket");
-        //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
-        //等同于socket = new WebSocket("ws://localhost:8083/checkcentersys/websocket/20");
-        /*socket = new WebSocket("${basePath}websocket/${cid}".replace("http","ws"));*/
-        socket = new WebSocket("ws://localhost:8080/websocket/20");
-        //打开事件
-        socket.onopen = function() {
-            console.log(" 已打开");Socket
-            //socket.send("这是来自客户端的消息" + location.href + new Date());
-        };
-        //获得消息事件
-        socket.onmessage = function(msg) {
-            console.log(msg.data);
-            //发现消息进入    开始处理前端触发逻辑
-        };
-        //关闭事件
-        socket.onclose = function() {
-            console.log("Socket已关闭");
-        };
-        //发生了错误事件
-        socket.onerror = function() {
-            alert("Socket发生了错误");
-            //此时可以尝试刷新页面
-        }
-        //离开页面时，关闭socket
-        //jquery1.8中已经被废弃，3.0中已经移除
-        // $(window).unload(function(){
-        //     socket.close();
-        //});
-    }
-    window.onload=myfun;
-</script>--%>
 
 <script type="text/javascript">
     var heartflag = false;
     var webSocket = null;
     var tryTime = 0;
+    var Base64 = null;
     /*$(function () {
 
 //        initSocket();
@@ -116,9 +79,13 @@
     function send(){
         var message = $("#message").val();
         var img = $("#img").val();
-
+        var img_upload = document.getElementById("img_upload");
+        var base64_code = document.getElementById("base64_code");
+        var img_area = document.getElementById("img_area");
+        img_upload.addEventListener('change', readFile, false);
         webSocket.send(message);
-        webSocket.send(img);
+        alert(Base64)
+        webSocket.send(Base64);
     }
 
     function clearConnectStatu(){
@@ -149,7 +116,40 @@
             $("#heartdiv").append(getNowFormatDate()+"  心跳 <br/>");
         }
         setTimeout("heart()", 10*60*1000);
+    }
 
+
+
+ /*   window.onload = function() {
+       var img_upload = document.getElementById("img_upload");
+        var base64_code = document.getElementById("base64_code");
+        var img_area = document.getElementById("img_area");
+        img_upload.addEventListener('change', readFile, false);
+    }*/
+
+    function readFile() {
+        var file = this.files[0];
+        if (!/image\/\w+/.test(file.type)) {
+            alert("请确保文件为图像类型");
+            return false;
+        }
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(e) {
+            var data = e.target.result;
+            var image = new Image();
+            image.onload = function() {
+                var width = image.width;
+                var height = image.height;
+                var info = `width=${width},height=${height},size=${file.size}`;
+
+                document.getElementById("info").innerHTML = info;
+            }
+            image.src = data;
+            Base64 = this.result
+                base64_code.innerHTML = this.result;
+            img_area.innerHTML = '<img src="' + this.result + '" alt=""/>';
+        }
     }
 </script>
 
@@ -175,7 +175,24 @@ server地址 :  <input id ="serveraddress" type="text" /><br/>
 心跳 :<br/>
 <div id="heartdiv"></div><br/>
 
+======================图片===================================
+<div >
+    <span>图片属性：</span>
+    <span id="info"></span>
+</div>
+<div class="a c">
+    <p>base64编码：</p>
+    <textarea id="base64_code" rows="20" cols="60" class="a b"></textarea>
+</div>
+<div class="a c" style="width:445px;height:365px;">
+    <p>图片展示：</p>
+    <div id="img_area"></div>
+</div>
 
+<div class="d">
+    <input type="file" id="img_upload" />
+</div>
+</body>
 
 </body>
 </html>
