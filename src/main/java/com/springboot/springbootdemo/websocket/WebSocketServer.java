@@ -9,6 +9,9 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ * 实现了群了 消息推送
+ */
 @Slf4j
 @ServerEndpoint("/webSocket/{sid}")
 @Component

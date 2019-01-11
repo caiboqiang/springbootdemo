@@ -1,17 +1,20 @@
 package com.springboot.springbootdemo.kurento;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserRegistry {
-
+    private static final Logger log = LoggerFactory.getLogger(UserSession.class);
     private ConcurrentHashMap<String, UserSession> usersByName = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, UserSession> usersBySessionId = new ConcurrentHashMap<>();
 
     public void register(UserSession user) {
         usersByName.put(user.getName(), user);
         usersBySessionId.put(user.getSession().getId(), user);
+        log.info("usersByName:{}::usersBySessionId:{}",usersByName.toString(),usersBySessionId.toString());
     }
 
     public UserSession getByName(String name) {

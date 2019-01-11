@@ -1,5 +1,6 @@
 package com.springboot.springbootdemo.kurento;
 
+import lombok.extern.slf4j.Slf4j;
 import org.kurento.client.KurentoClient;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +11,9 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 /**
  *要在Ubuntu  安装 KMS 才可以启动该功能   去掉下方注解
  */
-/*@SpringBootApplication
-@EnableWebSocket*/
+@SpringBootApplication
+@EnableWebSocket
+@Slf4j
 public class KmsApplication implements WebSocketConfigurer {
     @Bean
     public CallHandler callHandler() {
@@ -32,6 +34,7 @@ public class KmsApplication implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        log.info("WebSocketHandlerRegistry:{}",registry.toString());
         registry.addHandler(callHandler(), "/call").setAllowedOrigins("*");
     }
 }

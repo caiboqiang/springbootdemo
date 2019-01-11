@@ -2,6 +2,7 @@ package com.springboot.springbootdemo.kurento;
 
 
 import com.google.gson.JsonObject;
+import lombok.extern.slf4j.Slf4j;
 import org.kurento.client.IceCandidate;
 import org.kurento.client.WebRtcEndpoint;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class UserSession {
     public UserSession(WebSocketSession session, String name) {
         this.session = session;
         this.name = name;
+        log.info("UserSession:name:{},session:{},sessionId{}",name,session,session.getId());
     }
 
     public WebSocketSession getSession() {
@@ -37,6 +39,7 @@ public class UserSession {
     }
 
     public String getName() {
+        log.info("UserSession:{}",name);
         return name;
     }
 
@@ -70,6 +73,7 @@ public class UserSession {
     }
 
     public String getSessionId() {
+
         return session.getId();
     }
 
