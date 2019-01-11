@@ -109,6 +109,7 @@ public class ConsultWebSocket {
                            String msg, Session session) {
         // 此处应该有html过滤，进行数据加工
         msg = users.get(session.getId()) + ":" + msg;
+        System.out.println(msg);
         // 接收到信息后进行广播
         broadcast(roomName, msg);
     }
