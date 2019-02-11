@@ -53,6 +53,8 @@ public class redisClient {
         //return redisTemplate.keys("*");
         return sessionDAO.getActiveSessions();
     }
+
+
     /*
      *具体应用
      *redisClient.set("redis_key", "abc");

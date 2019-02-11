@@ -83,8 +83,7 @@ public class EmailUtils {
                 }
             }
             javaMailSender.setJavaMailProperties(properties);
-
-            MimeMessage       mailMessage   = javaMailSender.createMimeMessage();
+            MimeMessage mailMessage   = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(mailMessage, true);
             messageHelper.setTo(toUsers);
             if (ccUsers != null && ccUsers.length > 0) {
@@ -95,10 +94,10 @@ public class EmailUtils {
             messageHelper.setText(content, true);
 
             if (attachfiles != null && attachfiles.size() > 0) {
-                for (Map<String, String> attachfile : attachfiles) {
-                    String attachfileName = attachfile.get("name");
-                    File file = new File(attachfile.get("file"));
-                    messageHelper.addAttachment(attachfileName, file);
+                for (Map<String, String> attachFile : attachfiles) {
+                    String attachFileName = attachFile.get("name");
+                    File file = new File(attachFile.get("file"));
+                    messageHelper.addAttachment(attachFileName, file);
                 }
             }
             javaMailSender.send(mailMessage);
