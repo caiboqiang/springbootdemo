@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.net.ConnectException;
+
 /**
  * 异常捕获
  * 把抛出来的异常捕获，重新封装返回
@@ -47,5 +49,14 @@ public class ExceptionHandle {
     @ResponseBody
     public MessageBox log(AuthenticationException h){
         return MessageBox.build("100","登入错误在试一次");
+    }
+
+    /**
+     * redis没有启动
+     */
+    @ExceptionHandler(value = ConnectException.class)
+    @ResponseBody
+    public MessageBox logConnectException(ConnectException h){
+        return MessageBox.build("100","登入错误redis没有启动");
     }
 }

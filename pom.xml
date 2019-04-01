@@ -42,16 +42,18 @@
         </dependency>
         <!--END-->
         <!-- MySQL BEGIN-->
-      <!-- <dependency>
+       <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.21</version>
-        </dependency>-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
         </dependency>
+        <!-- END -->
+        <!-- rabbitmq依赖 BEGIN -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
         <!-- END -->
         <!-- druid阿里巴巴数据库连接池 BEGIN -->
         <dependency>
@@ -170,10 +172,10 @@
         <!-- END -->
         <!-- 对jsp页面支持 END -->
         <!--热部署.jar ,当你修改代码后，服务器会自动重启 BEGIN -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
+        </dependency>-->
         <!-- END -->
         <!-- 包含支持UI模版（Velocity，FreeMarker，JasperReports）， 邮件服务， 脚本服务(JRuby)， 缓存Cache（EHCache），
 			任务计划Scheduling（uartz）。 BEGIN-->
@@ -283,12 +285,19 @@
             <version>5.2.0</version>
         </dependency>
         <!-- END -->
-
+        <!--分页插件 BEGIN-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <!-- END -->
     </dependencies>
 
 

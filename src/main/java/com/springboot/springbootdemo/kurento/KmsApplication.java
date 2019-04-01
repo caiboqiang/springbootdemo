@@ -11,8 +11,8 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 /**
  *要在Ubuntu  安装 KMS 才可以启动该功能   去掉下方注解
  */
-@SpringBootApplication
-@EnableWebSocket
+/*@SpringBootApplication
+@EnableWebSocket*/
 @Slf4j
 public class KmsApplication implements WebSocketConfigurer {
     @Bean

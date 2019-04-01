@@ -2,6 +2,7 @@ package com.springboot.springbootdemo.configuration.shrio;
 
 
 
+import com.github.pagehelper.PageHelper;
 import com.springboot.springbootdemo.common.util.ShiroUtils;
 import com.springboot.springbootdemo.shrio.CustomRealm;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
+
 @Slf4j
 //@Configuration
 public class ShiroConfig {
@@ -156,4 +159,16 @@ public class ShiroConfig {
         advisor.setSecurityManager(securityManager);
         return advisor;
     }
+    //分页配置
+    @Bean
+    public PageHelper pageHelper(){
+        PageHelper pageHelper=new PageHelper();
+        Properties properties=new Properties();
+        properties.setProperty("offsetPageNum","true");
+        properties.setProperty("rowBoundsWithCount", "true");
+        properties.setProperty("reasonable", "true");
+        pageHelper.setProperties(properties);
+        return pageHelper;
+    }
+
 }
