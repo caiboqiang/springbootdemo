@@ -106,6 +106,7 @@ public class ShiroConfig {
         sessionManager.setSessionDAO(getMemorySessionDAO());
         return sessionManager;
     }
+    // 设置Cookie
     public SimpleCookie getSimpleCookie() {
         log.info("=================getSimpleCookie成功:7==================");
         SimpleCookie simpleCookie = new SimpleCookie();

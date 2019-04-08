@@ -1,6 +1,8 @@
 package com.springboot.springbootdemo.common.aop;
 
 
+import com.springboot.springbootdemo.common.util.CookieUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
  * 拦截所有的类和方法
  * execution(public * com.controller.*.*(..))
  */
+@Slf4j
 @Aspect
 @Component //把文件引入到spring容器中
 public class httpAspect {
@@ -48,6 +52,17 @@ public class httpAspect {
         //获取参数
         joinPoint.getArgs();
         logger.info("==拦截成功=={}", servletRequest.getRequestURL());
+        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+
+        //查询cookie SHAREJSESSIONID 这一块可以换成redis 判断用户是否登入
+        //Cookie[] cookies = request.getCookies();
+        Cookie cookie = CookieUtil.get(request, "SHAREJSESSIONID");
+        if(cookie != null ){
+            String cookieName = cookie.getName();
+            log.info("========AOP获取token:{}==============",cookieName);
+        }
+
         //System.out.println("拦截成功");
 
     }
